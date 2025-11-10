@@ -85,12 +85,7 @@ mlp_clf = Pipeline(steps=[
     ("model", MLPClassifier(hidden_layer_sizes=(100,), max_iter=500, random_state=42))
 ])
 
-# Naive Bayes needs dense input
-nave_clf = Pipeline(steps=[
-    ("preprocess", preprocess),
-    ("to_dense", FunctionTransformer(lambda x: x.toarray(), accept_sparse=True)),
-    ("model", GaussianNB())
-])
+
 
 xgb_clf = Pipeline(steps=[
     ("preprocess", preprocess),
