@@ -2,6 +2,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
@@ -64,10 +65,16 @@ lr_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", LogisticRegression(max_iter=1000, solver="lbfgs"))
 ])
+#Add MLP classifier
+mlp_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("model", MLPClassifier(hidden_layer_sizes=(100, ), max_iter=500, random_state=42))
+])
 
 # 7. Fit
 dt_clf.fit(X_train, y_train)
 lr_clf.fit(X_train, y_train)
+mlp_clf.fit(X_train, y_train)
 
 # 8. Evaluation helper
 def evaluate_model(name, model, X_test, y_test):
@@ -91,3 +98,4 @@ def evaluate_model(name, model, X_test, y_test):
 
 evaluate_model("Decision Tree", dt_clf, X_test, y_test)
 evaluate_model("Logistic Regression", lr_clf, X_test, y_test)
+evaluate_model("MLP Classifier", mlp_clf, X_test, y_test)
