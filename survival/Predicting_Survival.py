@@ -4,7 +4,7 @@ import pandas as pd
 
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate, GridSearchCV
 from sklearn.compose import ColumnTransformer
-from sklearn.naive_bayes import GaussianNB
+
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, FunctionTransformer
