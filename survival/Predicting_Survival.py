@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.naive_bayes import GaussianNB
+#from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
@@ -71,8 +72,6 @@ mlp_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", MLPClassifier(hidden_layer_sizes=(100, ), max_iter=500, random_state=42))
 ])
-#Add xgboost classifier
-
 
 #Add naive bayes classifier
 from sklearn.preprocessing import FunctionTransformer
