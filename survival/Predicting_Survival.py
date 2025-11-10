@@ -2,6 +2,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
@@ -70,11 +71,23 @@ mlp_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", MLPClassifier(hidden_layer_sizes=(100, ), max_iter=500, random_state=42))
 ])
+#Add xgboost classifier
+
+
+#Add naive bayes classifier
+from sklearn.preprocessing import FunctionTransformer
+
+nave_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("to_dense", FunctionTransformer(lambda x: x.toarray(), accept_sparse=True)),
+    ("model", GaussianNB())
+])
 
 # 7. Fit
 dt_clf.fit(X_train, y_train)
 lr_clf.fit(X_train, y_train)
 mlp_clf.fit(X_train, y_train)
+nave_clf.fit(X_train, y_train)
 
 # 8. Evaluation helper
 def evaluate_model(name, model, X_test, y_test):
@@ -99,3 +112,4 @@ def evaluate_model(name, model, X_test, y_test):
 evaluate_model("Decision Tree", dt_clf, X_test, y_test)
 evaluate_model("Logistic Regression", lr_clf, X_test, y_test)
 evaluate_model("MLP Classifier", mlp_clf, X_test, y_test)
+evaluate_model("Naive Bayes Classifier", nave_clf, X_test, y_test)
