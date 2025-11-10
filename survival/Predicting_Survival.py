@@ -102,7 +102,7 @@ models = {
     "Decision Tree": dt_clf,
     "Logistic Regression": lr_clf,
     "MLP Classifier": mlp_clf,
-    "Naive Bayes Classifier": nave_clf,
+
     "XGBoost Classifier": xgb_clf,
 }
 
