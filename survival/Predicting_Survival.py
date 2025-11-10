@@ -85,7 +85,13 @@ nave_clf = Pipeline(steps=[
 #Add XGBoost Classifier
 xgb_clf = Pipeline(steps=[
     ("preprocess", preprocess),
-    ("model", XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42))
+    ("model", XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
+        use_label_encoder=False,
+        random_state=42,
+        n_estimators=300
+    ))
 ])
 # 7. Fit
 dt_clf.fit(X_train, y_train)
