@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate, GridSearchCV
 from sklearn.compose import ColumnTransformer
 from sklearn.naive_bayes import GaussianNB
 from xgboost import XGBClassifier
@@ -41,7 +41,7 @@ categorical_cols = [
 numeric_cols = [c for c in X.columns if c not in categorical_cols]
 
 # =========================================================
-# 4. Train/test split (we'll do CV on the training part)
+# 4. Train/test split
 # =========================================================
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
@@ -57,7 +57,6 @@ numeric_transformer = Pipeline(steps=[
 
 categorical_transformer = Pipeline(steps=[
     ("imputer", SimpleImputer(strategy="most_frequent")),
-    # sparse output is fine; we densify only for Naive Bayes later
     ("onehot", OneHotEncoder(handle_unknown="ignore"))
 ])
 
@@ -86,7 +85,7 @@ mlp_clf = Pipeline(steps=[
     ("model", MLPClassifier(hidden_layer_sizes=(100,), max_iter=500, random_state=42))
 ])
 
-# Naive Bayes needs dense input, so we add a to_dense step
+# Naive Bayes needs dense input
 nave_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("to_dense", FunctionTransformer(lambda x: x.toarray(), accept_sparse=True)),
@@ -113,7 +112,7 @@ models = {
 }
 
 # =========================================================
-# 7. Cross-validation on the training data
+# 7. Cross-validation on the training data (baseline models)
 # =========================================================
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
@@ -143,7 +142,34 @@ for name, model in models.items():
         print(f"{metric.capitalize():<9}: mean = {scores.mean():.4f}, std = {scores.std():.4f}")
 
 # =========================================================
-# 8. Fit on full training set and evaluate on test set
+# 8. Hyperparameter tuning for MLP (GridSearchCV)
+# =========================================================
+
+# We start from the mlp_clf pipeline defined above
+param_grid_mlp = {
+    "model__hidden_layer_sizes": [(50,), (100,), (50, 50)],
+    "model__alpha": [1e-5, 1e-4, 1e-3],
+    "model__learning_rate_init": [0.001, 0.01],
+}
+
+grid_mlp = GridSearchCV(
+    mlp_clf,
+    param_grid=param_grid_mlp,
+    scoring="roc_auc",   # main metric for tuning
+    cv=cv,
+    n_jobs=-1
+)
+
+print("\n===== Tuning MLP with GridSearchCV =====")
+grid_mlp.fit(X_train, y_train)
+
+print("Best MLP params:", grid_mlp.best_params_)
+print("Best MLP CV ROC AUC:", grid_mlp.best_score_)
+
+best_mlp = grid_mlp.best_estimator_
+
+# =========================================================
+# 9. Final evaluation on test set (all base models + tuned MLP)
 # =========================================================
 def evaluate_model(name, model, X_test, y_test):
     y_pred = model.predict(X_test)
@@ -166,6 +192,10 @@ def evaluate_model(name, model, X_test, y_test):
 
 print("\n===== Final Evaluation on Test Set =====")
 
+# base models
 for name, model in models.items():
     model.fit(X_train, y_train)
     evaluate_model(name, model, X_test, y_test)
+
+# tuned MLP
+evaluate_model("MLP Classifier (tuned)", best_mlp, X_test, y_test)
