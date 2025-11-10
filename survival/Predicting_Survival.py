@@ -184,7 +184,6 @@ def evaluate_model(name, model, X_test, y_test):
     print("F1 score :", f1)
     print("ROC AUC  :", roc_auc)
     print("Confusion matrix:\n", cm)
-
 print("\n===== Final Evaluation on Test Set =====")
 
 # base models
