@@ -1,11 +1,13 @@
-#prepcrocssing data for survival analysis
+# preprocessing data for survival analysis
+import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate
 from sklearn.compose import ColumnTransformer
 from sklearn.naive_bayes import GaussianNB
 from xgboost import XGBClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, FunctionTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.tree import DecisionTreeClassifier
@@ -15,7 +17,9 @@ from sklearn.metrics import (
     roc_auc_score, confusion_matrix
 )
 
+# =========================================================
 # 1. Load data
+# =========================================================
 df = pd.read_csv("Hp treatment training.csv", encoding="latin1")
 
 # 2. Drop useless columns
@@ -28,18 +32,24 @@ df["Treated_with_drugs"] = df["Treated_with_drugs"].str.upper()
 y = df["Survived_1_year"]
 X = df.drop(columns=["Survived_1_year", "ID_Patient_Care_Situation", "Patient_ID"])
 
-categorical_cols = ["Treated_with_drugs",
-                    "Patient_Smoker",
-                    "Patient_Rural_Urban",
-                    "Patient_mental_condition"]
+categorical_cols = [
+    "Treated_with_drugs",
+    "Patient_Smoker",
+    "Patient_Rural_Urban",
+    "Patient_mental_condition",
+]
 numeric_cols = [c for c in X.columns if c not in categorical_cols]
 
-# 4. Train/test split
+# =========================================================
+# 4. Train/test split (we'll do CV on the training part)
+# =========================================================
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# 5. Preprocessing
+# =========================================================
+# 5. Preprocessing pipelines
+# =========================================================
 numeric_transformer = Pipeline(steps=[
     ("imputer", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler())
@@ -47,17 +57,20 @@ numeric_transformer = Pipeline(steps=[
 
 categorical_transformer = Pipeline(steps=[
     ("imputer", SimpleImputer(strategy="most_frequent")),
+    # sparse output is fine; we densify only for Naive Bayes later
     ("onehot", OneHotEncoder(handle_unknown="ignore"))
 ])
 
 preprocess = ColumnTransformer(
     transformers=[
         ("num", numeric_transformer, numeric_cols),
-        ("cat", categorical_transformer, categorical_cols)
+        ("cat", categorical_transformer, categorical_cols),
     ]
 )
 
-# 6. Models
+# =========================================================
+# 6. Models (as pipelines)
+# =========================================================
 dt_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", DecisionTreeClassifier(random_state=42))
@@ -67,22 +80,19 @@ lr_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", LogisticRegression(max_iter=1000, solver="lbfgs"))
 ])
-#Add MLP classifier
+
 mlp_clf = Pipeline(steps=[
     ("preprocess", preprocess),
-    ("model", MLPClassifier(hidden_layer_sizes=(100, ), max_iter=500, random_state=42))
+    ("model", MLPClassifier(hidden_layer_sizes=(100,), max_iter=500, random_state=42))
 ])
 
-#Add naive bayes classifier
-from sklearn.preprocessing import FunctionTransformer
-
+# Naive Bayes needs dense input, so we add a to_dense step
 nave_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("to_dense", FunctionTransformer(lambda x: x.toarray(), accept_sparse=True)),
     ("model", GaussianNB())
 ])
 
-#Add XGBoost Classifier
 xgb_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", XGBClassifier(
@@ -93,14 +103,48 @@ xgb_clf = Pipeline(steps=[
         n_estimators=300
     ))
 ])
-# 7. Fit
-dt_clf.fit(X_train, y_train)
-lr_clf.fit(X_train, y_train)
-mlp_clf.fit(X_train, y_train)
-nave_clf.fit(X_train, y_train)
-xgb_clf.fit(X_train, y_train)
 
-# 8. Evaluation helper
+models = {
+    "Decision Tree": dt_clf,
+    "Logistic Regression": lr_clf,
+    "MLP Classifier": mlp_clf,
+    "Naive Bayes Classifier": nave_clf,
+    "XGBoost Classifier": xgb_clf,
+}
+
+# =========================================================
+# 7. Cross-validation on the training data
+# =========================================================
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+scoring = {
+    "accuracy": "accuracy",
+    "precision": "precision",
+    "recall": "recall",
+    "f1": "f1",
+    "roc_auc": "roc_auc",
+}
+
+print("===== 5-fold Cross-Validation Results (on training data) =====")
+
+for name, model in models.items():
+    cv_results = cross_validate(
+        model,
+        X_train,
+        y_train,
+        cv=cv,
+        scoring=scoring,
+        n_jobs=-1
+    )
+
+    print(f"\n=== {name} ===")
+    for metric in scoring.keys():
+        scores = cv_results[f"test_{metric}"]
+        print(f"{metric.capitalize():<9}: mean = {scores.mean():.4f}, std = {scores.std():.4f}")
+
+# =========================================================
+# 8. Fit on full training set and evaluate on test set
+# =========================================================
 def evaluate_model(name, model, X_test, y_test):
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
@@ -112,7 +156,7 @@ def evaluate_model(name, model, X_test, y_test):
     roc_auc = roc_auc_score(y_test, y_proba)
     cm = confusion_matrix(y_test, y_pred)
 
-    print(f"\n=== {name} ===")
+    print(f"\n=== {name} (Test set) ===")
     print("Accuracy :", acc)
     print("Precision:", prec)
     print("Recall   :", rec)
@@ -120,8 +164,8 @@ def evaluate_model(name, model, X_test, y_test):
     print("ROC AUC  :", roc_auc)
     print("Confusion matrix:\n", cm)
 
-evaluate_model("Decision Tree", dt_clf, X_test, y_test)
-evaluate_model("Logistic Regression", lr_clf, X_test, y_test)
-evaluate_model("MLP Classifier", mlp_clf, X_test, y_test)
-evaluate_model("Naive Bayes Classifier", nave_clf, X_test, y_test)
-evaluate_model("XGBoost Classifier", xgb_clf, X_test, y_test)
+print("\n===== Final Evaluation on Test Set =====")
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    evaluate_model(name, model, X_test, y_test)
