@@ -125,7 +125,7 @@ class MLProcessor:
         if model_type == "random_forest":
             return RandomForestClassifier(
                 random_state=42,
-                n_estimators=200,
+                n_estimators=300,
                 n_jobs=-1
             )
         elif model_type == "decision_tree":
@@ -137,7 +137,7 @@ class MLProcessor:
             return XGBClassifier(
                 random_state=42,
                 n_estimators=300,
-                learning_rate=0.05,
+                learning_rate=0.04,
                 max_depth=4,
                 n_jobs=-1,
                 eval_metric="logloss"
