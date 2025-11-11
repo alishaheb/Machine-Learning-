@@ -137,7 +137,7 @@ class MLProcessor:
             return XGBClassifier(
                 random_state=42,
                 n_estimators=800,
-                learning_rate=0.04,
+                learning_rate=0.03,
                 max_depth=4,
                 n_jobs=-1,
                 eval_metric="logloss"
