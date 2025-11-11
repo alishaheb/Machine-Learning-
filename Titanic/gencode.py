@@ -136,7 +136,7 @@ class MLProcessor:
         elif model_type == "xgboost":
             return XGBClassifier(
                 random_state=42,
-                n_estimators=400,
+                n_estimators=800,
                 learning_rate=0.04,
                 max_depth=4,
                 n_jobs=-1,
