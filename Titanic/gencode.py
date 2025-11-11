@@ -8,21 +8,23 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, mean_squared_error
-from typing import Optional
+
+from xgboost import XGBClassifier, XGBRegressor  # <-- NEW
 
 
 class MLProcessor:
-    def __init__(self, file_path: str, target_column: str):
+    def __init__(self, file_path: str, target_column: str, model_type: str = "random_forest"):
         self.file_path = file_path
         self.target_column = target_column
-        self.df = pd.read_csv(file_path)
+        self.model_type = model_type  # "random_forest" or "xgboost"
 
+        self.df = pd.read_csv(file_path)
         self.X = None
         self.y = None
         self.model = None
         self.task_type = None
 
-        self.preprocessor: Optional[ColumnTransformer] = None
+        self.preprocessor: ColumnTransformer | None = None
         self.numeric_features = None
         self.categorical_features = None
 
@@ -51,8 +53,7 @@ class MLProcessor:
         elif self.y.dtype in ['int64', 'float64'] and self.y.nunique() > 20:
             self.task_type = 'regression'
         else:
-            raise ValueError("Unable to determine task type. "
-                             "Please check the target column.")
+            raise ValueError("Unable to determine task type. Please check the target column.")
 
         print(f"Detected task type: {self.task_type}")
 
@@ -75,6 +76,7 @@ class MLProcessor:
 
         categorical_pipeline = Pipeline([
             ('imputer', SimpleImputer(strategy='most_frequent')),
+            # NOTE: sparse_output instead of sparse for new sklearn
             ('encoder', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
         ])
 
@@ -101,21 +103,42 @@ class MLProcessor:
         print("Data split complete.")
 
     def train_model(self):
-        print("Training model...")
-        if self.task_type == 'classification':
-            self.model = RandomForestClassifier(
-                random_state=42,
-                n_estimators=200,
-                n_jobs=-1
-            )
-        elif self.task_type == 'regression':
-            self.model = RandomForestRegressor(
-                random_state=42,
-                n_estimators=200,
-                n_jobs=-1
-            )
+        print(f"Training model ({self.model_type})...")
+
+        if self.model_type == "random_forest":
+            if self.task_type == 'classification':
+                self.model = RandomForestClassifier(
+                    random_state=42,
+                    n_estimators=200,
+                    n_jobs=-1
+                )
+            elif self.task_type == 'regression':
+                self.model = RandomForestRegressor(
+                    random_state=42,
+                    n_estimators=200,
+                    n_jobs=-1
+                )
+        elif self.model_type == "xgboost":
+            if self.task_type == 'classification':
+                self.model = XGBClassifier(
+                    random_state=42,
+                    n_estimators=300,
+                    learning_rate=0.05,
+                    max_depth=4,
+                    n_jobs=-1,
+                    eval_metric="logloss"   # avoids warning
+                )
+            elif self.task_type == 'regression':
+                self.model = XGBRegressor(
+                    random_state=42,
+                    n_estimators=300,
+                    learning_rate=0.05,
+                    max_depth=4,
+                    n_jobs=-1,
+                    objective="reg:squarederror"
+                )
         else:
-            raise ValueError("Task type must be 'classification' or 'regression'.")
+            raise ValueError("model_type must be 'random_forest' or 'xgboost'")
 
         self.model.fit(self.X_train, self.y_train)
         print("Model training complete.")
@@ -127,12 +150,12 @@ class MLProcessor:
             print(classification_report(self.y_test, y_pred))
         elif self.task_type == 'regression':
             mse = mean_squared_error(self.y_test, y_pred)
-            print(f"Mean Squared Error: {mse:.2f}")
+            print(f"Mean Squared Error: {mse:.4f}")
 
-    def show_feature_importances(self, top_n: Optional[int] = None):
+    def show_feature_importances(self, top_n: int | None = None):
         """
         Print feature importances sorted from highest to lowest.
-        Works for both classification and regression RandomForest.
+        Works for both RandomForest and XGBoost.
         """
         if not hasattr(self.model, "feature_importances_"):
             print("This model does not provide feature_importances_.")
@@ -142,7 +165,6 @@ class MLProcessor:
         try:
             feature_names = self.preprocessor.get_feature_names_out()
         except AttributeError:
-            # Fallback for older sklearn
             num_names = self.numeric_features
             cat_encoder = self.preprocessor.named_transformers_['cat'].named_steps['encoder']
             cat_names = cat_encoder.get_feature_names_out(self.categorical_features)
@@ -168,13 +190,14 @@ class MLProcessor:
         self.split_data()
         self.train_model()
         self.evaluate_model()
-        self.show_feature_importances(top_n=30)  # show top 30 by default
+        self.show_feature_importances(top_n=30)
 
 
 if __name__ == "__main__":
     processor = MLProcessor(
         file_path='Titanic-Dataset.csv',
-        target_column='Survived'
+        target_column='Survived',
+        model_type="xgboost"   # <-- SWITCH HERE: "xgboost" or "random_forest"
     )
 
     print("Columns in dataset:", processor.df.columns.tolist())
