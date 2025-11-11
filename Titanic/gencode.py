@@ -7,16 +7,20 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.metrics import classification_report, mean_squared_error
 
-from xgboost import XGBClassifier, XGBRegressor  # <-- NEW
+from xgboost import XGBClassifier, XGBRegressor  # make sure: pip install xgboost
 
 
 class MLProcessor:
     def __init__(self, file_path: str, target_column: str, model_type: str = "random_forest"):
+        """
+        model_type: "random_forest", "decision_tree", or "xgboost"
+        """
         self.file_path = file_path
         self.target_column = target_column
-        self.model_type = model_type  # "random_forest" or "xgboost"
+        self.model_type = model_type
 
         self.df = pd.read_csv(file_path)
         self.X = None
@@ -24,7 +28,7 @@ class MLProcessor:
         self.model = None
         self.task_type = None
 
-        self.preprocessor: ColumnTransformer | None = None
+        self.preprocessor = None
         self.numeric_features = None
         self.categorical_features = None
 
@@ -33,7 +37,7 @@ class MLProcessor:
         self.df.drop_duplicates(inplace=True)
         self.df.dropna(axis=1, how='all', inplace=True)
 
-        # Drop irrelevant or unique identifier columns (Titanic-specific)
+        # Drop irrelevant/ID columns (Titanic-specific)
         drop_cols = [col for col in ['PassengerId', 'Name', 'Ticket', 'Cabin']
                      if col in self.df.columns]
         if drop_cols:
@@ -45,8 +49,7 @@ class MLProcessor:
         self.X = self.df.drop(columns=[self.target_column])
 
         # Determine task type
-        if ((self.y.nunique() <= 20 and self.y.dtype == 'object')
-                or self.y.dtype == 'bool'):
+        if ((self.y.nunique() <= 20 and self.y.dtype == 'object') or self.y.dtype == 'bool'):
             self.task_type = 'classification'
         elif self.y.nunique() <= 2:
             self.task_type = 'classification'
@@ -58,12 +61,8 @@ class MLProcessor:
         print(f"Detected task type: {self.task_type}")
 
         # Identify feature types
-        self.numeric_features = self.X.select_dtypes(
-            include=['int64', 'float64']
-        ).columns.tolist()
-        self.categorical_features = self.X.select_dtypes(
-            include=['object', 'category', 'bool']
-        ).columns.tolist()
+        self.numeric_features = self.X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+        self.categorical_features = self.X.select_dtypes(include=['object', 'category', 'bool']).columns.tolist()
 
         print(f"Numeric features: {self.numeric_features}")
         print(f"Categorical features: {self.categorical_features}")
@@ -76,7 +75,7 @@ class MLProcessor:
 
         categorical_pipeline = Pipeline([
             ('imputer', SimpleImputer(strategy='most_frequent')),
-            # NOTE: sparse_output instead of sparse for new sklearn
+            # IMPORTANT: new sklearn uses sparse_output instead of sparse
             ('encoder', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
         ])
 
@@ -112,12 +111,25 @@ class MLProcessor:
                     n_estimators=200,
                     n_jobs=-1
                 )
-            elif self.task_type == 'regression':
+            else:
                 self.model = RandomForestRegressor(
                     random_state=42,
                     n_estimators=200,
                     n_jobs=-1
                 )
+
+        elif self.model_type == "decision_tree":
+            if self.task_type == 'classification':
+                self.model = DecisionTreeClassifier(
+                    random_state=42,
+                    max_depth=None
+                )
+            else:
+                self.model = DecisionTreeRegressor(
+                    random_state=42,
+                    max_depth=None
+                )
+
         elif self.model_type == "xgboost":
             if self.task_type == 'classification':
                 self.model = XGBClassifier(
@@ -126,9 +138,9 @@ class MLProcessor:
                     learning_rate=0.05,
                     max_depth=4,
                     n_jobs=-1,
-                    eval_metric="logloss"   # avoids warning
+                    eval_metric="logloss"
                 )
-            elif self.task_type == 'regression':
+            else:
                 self.model = XGBRegressor(
                     random_state=42,
                     n_estimators=300,
@@ -138,7 +150,7 @@ class MLProcessor:
                     objective="reg:squarederror"
                 )
         else:
-            raise ValueError("model_type must be 'random_forest' or 'xgboost'")
+            raise ValueError("model_type must be 'random_forest', 'decision_tree', or 'xgboost'.")
 
         self.model.fit(self.X_train, self.y_train)
         print("Model training complete.")
@@ -148,15 +160,11 @@ class MLProcessor:
         y_pred = self.model.predict(self.X_test)
         if self.task_type == 'classification':
             print(classification_report(self.y_test, y_pred))
-        elif self.task_type == 'regression':
+        else:
             mse = mean_squared_error(self.y_test, y_pred)
             print(f"Mean Squared Error: {mse:.4f}")
 
     def show_feature_importances(self, top_n: int | None = None):
-        """
-        Print feature importances sorted from highest to lowest.
-        Works for both RandomForest and XGBoost.
-        """
         if not hasattr(self.model, "feature_importances_"):
             print("This model does not provide feature_importances_.")
             return
@@ -197,10 +205,6 @@ if __name__ == "__main__":
     processor = MLProcessor(
         file_path='Titanic-Dataset.csv',
         target_column='Survived',
-        model_type="xgboost"   # <-- SWITCH HERE: "xgboost" or "random_forest"
+        model_type="xgboost"     # change to: "random_forest" or "decision_tree"
     )
-
-    print("Columns in dataset:", processor.df.columns.tolist())
-    print(processor.df.head())
-
     processor.run_pipeline()
