@@ -78,4 +78,22 @@ knn_clf = Pipeline(steps=[
     ("model", KNeighborsClassifier())
 ])
 from xgboost import XGBClassifier
+xgb_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("model", XGBClassifier(
+        objective="binary:logistic",
+        random_state=42
+    ))
+])
+models = {
+    "Decision Tree": dt_clf,
+    "Random Forest": rf_clf,
+    "Logistic Regression": lr_clf,
+    "SVM": svm_clf,
+    "MLP Classifier": mlp_clf,
+    "Gaussian NB": gnb_clf,
+    "KNN": knn_clf,
+    "XGBoost Classifier": xgb_clf,
+}
+
 
