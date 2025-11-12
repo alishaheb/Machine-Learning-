@@ -95,5 +95,20 @@ models = {
     "KNN": knn_clf,
     "XGBoost Classifier": xgb_clf,
 }
+# Models can now be trained and evaluated using `X_train`, `X_test`, `y_train`, and `y_test`
+# }
+# Models can now be trained and evaluated using `X_train`, `X_test`, `y_train`, and `y_test`
+# }
+# =========================================================
+#evlaluation like f1 score, accuracy, precision, recall
+from sklearn.model_selection import cross_validate, StratifiedKFold
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+scoring = {
+    "accuracy": "accuracy",
+    "precision": "precision",
+    "recall": "recall",
+    "f1": "f1",
+    "roc_auc": "roc_auc",
+}
 
 
