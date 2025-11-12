@@ -45,3 +45,4 @@ dt_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", DecisionTreeClassifier(random_state=42))
 ])
+from sklearn.ensemble import RandomForestClassifier
