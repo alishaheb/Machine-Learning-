@@ -7,7 +7,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 # =========================================================
 # 1. Load data
-df = pd.read_csv("drop_out_data.csv")
+df = pd.read_csv("dropout.csv")
+df.head(5)
 # 2. Drop useless columns
 df = df.drop(columns=["Student_ID", "Enrollment_ID"])
 # 3. Target and features
