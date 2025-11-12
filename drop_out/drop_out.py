@@ -50,3 +50,13 @@ rf_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", RandomForestClassifier(random_state=42))
 ])
+from sklearn.linear_model import LogisticRegression
+lr_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("model", LogisticRegression(max_iter=1000, random_state=42))
+])
+from sklearn.svm import SVC
+svm_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("model", SVC(random_state=42))
+])
