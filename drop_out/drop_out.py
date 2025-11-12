@@ -10,7 +10,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 df = pd.read_csv("dropout.csv")
 df.head(5)
 # 2. Drop useless columns
-df = df.drop(columns=["Student_ID", "Enrollment_ID"])
+#df = df.drop(columns=["Student_ID", "Enrollment_ID"])
 # 3. Target and features
 y = df["Dropped_Out"]
 X = df.drop(columns=["Dropped_Out"])
