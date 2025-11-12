@@ -110,5 +110,24 @@ scoring = {
     "f1": "f1",
     "roc_auc": "roc_auc",
 }
+print("===== 5-fold Cross-Validation Results (on training data) =====")
+for name, model in models.items():
+    cv_results = cross_validate(
+        model,
+        X_train,
+        y_train,
+        cv=cv,
+        scoring=scoring,
+        return_train_score=False
+    )
+    print(f"\nModel: {name}")
+    for metric in scoring.keys():
+        mean_score = cv_results[f'test_{metric}'].mean()
+        std_score = cv_results[f'test_{metric}'].std()
+        print(f"{metric.capitalize()}: {mean_score:.4f} ± {std_score:.4f}")
+# =========================================================
+# 7. Final evaluation on test data
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, classification_report
+print("===== Final Evaluation on Test Data =====")
 
 
