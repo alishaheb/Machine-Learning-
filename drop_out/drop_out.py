@@ -61,12 +61,15 @@ svm_clf = Pipeline(steps=[
     ("model", SVC(random_state=42))
 ])
 
-# These pipelines can now be trained and evaluated on the drop out dataset.
+
+from sklearn.neural_network import MLPClassifier
+mlp_clf = Pipeline(steps=[
     ("preprocess", preprocess),
-    ("model", SVC(random_state=42))
+    ("model", MLPClassifier(max_iter=500, random_state=42))
 ])
-# from sklearn.linear_model import LogisticRegression
-lr_clf = Pipeline(steps=[
+from sklearn.naive_bayes import GaussianNB
+gnb_clf = Pipeline(steps=[
     ("preprocess", preprocess),
-    ("model", LogisticRegression(max_iter=1000, random_state=42))
+    ("model", GaussianNB())
 ])
+
