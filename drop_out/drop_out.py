@@ -72,4 +72,10 @@ gnb_clf = Pipeline(steps=[
     ("preprocess", preprocess),
     ("model", GaussianNB())
 ])
+from sklearn.neighbors import KNeighborsClassifier
+knn_clf = Pipeline(steps=[
+    ("preprocess", preprocess),
+    ("model", KNeighborsClassifier())
+])
+from xgboost import XGBClassifier
 
