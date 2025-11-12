@@ -18,7 +18,7 @@ from sklearn.metrics import (
     mean_squared_error
 )
 
-from xgboost import XGBClassifier   # pip install xgboost
+from xgboost import XGBClassifier  # pip install xgboost
 
 
 class MLProcessor:
