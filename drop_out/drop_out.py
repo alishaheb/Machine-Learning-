@@ -39,9 +39,4 @@ preprocess = ColumnTransformer(
 )
 # Now `preprocess` can be used in model pipelines
 # =========================================================
-# 6. Models (as pipelines)
-from sklearn.tree import DecisionTreeClassifier
-dt_clf = Pipeline(steps=[
-    ("preprocess", preprocess),
-    ("model", DecisionTreeClassifier(random_state=42))
-])
+
