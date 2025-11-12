@@ -129,5 +129,26 @@ for name, model in models.items():
 # 7. Final evaluation on test data
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, classification_report
 print("===== Final Evaluation on Test Data =====")
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    if hasattr(model.named_steps['model'], "predict_proba"):
+        y_proba = model.predict_proba(X_test)
+    else:
+        y_proba = None
 
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred, average='binary')
+    rec = recall_score(y_test, y_pred, average='binary')
+    f1 = f1_score(y_test, y_pred, average='binary')
+    roc = roc_auc_score(y_test, y_proba[:, 1]) if y_proba is not None else None
+
+    print(f"\nModel: {name}")
+    print(classification_report(y_test, y_pred))
+    print(f"Accuracy : {acc:.4f}")
+    print(f"Precision: {prec:.4f}")
+    print(f"Recall   : {rec:.4f}")
+    print(f"F1-score : {f1:.4f}")
+    if roc is not None:
+        print(f"ROC AUC  : {roc:.4f}")
 
