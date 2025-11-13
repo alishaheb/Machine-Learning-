@@ -16,7 +16,7 @@ x = df.head(5)
 print(x)
 # 2. Drop useless columns
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
-df["Target"] = (df["Target"] == "Dropout").astype(int)
+#df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 # Quick check
 print(df["Target"].value_counts())
