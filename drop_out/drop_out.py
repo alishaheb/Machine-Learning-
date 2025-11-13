@@ -167,23 +167,4 @@ for name, model in models.items():
     if roc is not None:
         print(f"ROC AUC  : {roc:.4f}")
 # =========================================================
-#print roc and aoc for xgboost
-    if name == "XGBoost Classifier":
-        print(f"\nXGBoost Classifier ROC AUC on Test Data: {roc:.4f}")
-    y_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else None
-    # Calculate metrics
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    roc_auc = roc_auc_score(y_test, y_proba) if y_proba is not None else 'N/A'
-    # Print results
-    print(f"Model: {name}")
-    print(f"  Accuracy: {accuracy:.4f}")
-    print(f"  Precision: {precision:.4f}")
-    print(f"  Recall: {recall:.4f}")
-    print(f"  F1 Score: {f1:.4f}")
-    print(f"  ROC AUC: {roc_auc if roc_auc == 'N/A' else f'{roc_auc:.4f}'}")
-    print("------------------------------------------------------------")
-# =========================================================
 
