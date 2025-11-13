@@ -168,42 +168,22 @@ for name, model in models.items():
         print(f"ROC AUC  : {roc:.4f}")
 # =========================================================
 #print roc and aoc for xgboost
-from sklearn.model_selection import cross_validate, StratifiedKFold
-import matplotlib.pyplot as plt
-
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-scoring = {
-    "accuracy": "accuracy",
-    "precision": "precision",
-    "recall": "recall",
-    "f1": "f1",
-    "roc_auc": "roc_auc",
-}
-
-print("===== 5-fold Cross-Validation Results (on training data) =====")
-
-all_accuracies = []   # list of arrays, one per model
-model_names   = []    # labels for x-axis
-
-for name, model in models.items():
-    cv_results = cross_validate(
-        model,
-        X_train,
-        y_train,
-        cv=cv,
-        scoring=scoring,
-        return_train_score=False
-    )
-
-    # print mean/std like before (optional)
-    print(f"\nModel: {name}")
-    for metric in scoring.keys():
-        mean_score = cv_results[f'test_{metric}'].mean()
-        std_score = cv_results[f'test_{metric}'].std()
-        print(f"{metric.capitalize()}: {mean_score:.4f} ± {std_score:.4f}")
-
-    # store accuracies for the boxplot
-    all_accuracies.append(cv_results["test_accuracy"])
-    model_names.append(name)
+    if name == "XGBoost Classifier":
+        print(f"\nXGBoost Classifier ROC AUC on Test Data: {roc:.4f}")
+    y_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else None
+    # Calculate metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    roc_auc = roc_auc_score(y_test, y_proba) if y_proba is not None else 'N/A'
+    # Print results
+    print(f"Model: {name}")
+    print(f"  Accuracy: {accuracy:.4f}")
+    print(f"  Precision: {precision:.4f}")
+    print(f"  Recall: {recall:.4f}")
+    print(f"  F1 Score: {f1:.4f}")
+    print(f"  ROC AUC: {roc_auc if roc_auc == 'N/A' else f'{roc_auc:.4f}'}")
+    print("------------------------------------------------------------")
+# =========================================================
 
