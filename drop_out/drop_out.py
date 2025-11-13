@@ -5,10 +5,13 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+import numpy as np
 import warnings
 # =========================================================
 # Ignore warnings for cleaner output
 warnings.filterwarnings("ignore")
+
+# =========================================================
 # 1. Load data
 df = pd.read_csv("dropout.csv", sep=";")
 
@@ -16,7 +19,7 @@ x = df.head(5)
 print(x)
 # 2. Drop useless columns
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
-#df["Target"] = (df["Target"] == "Dropout").astype(int)
+df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 # Quick check
 print(df["Target"].value_counts())
