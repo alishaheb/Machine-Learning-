@@ -12,10 +12,16 @@ df = pd.read_csv("dropout.csv", sep=";")
 x = df.head(5)
 print(x)
 # 2. Drop useless columns
-#df = df.drop(columns=["Student_ID", "Enrollment_ID"])
+# Turn Target into binary: 1 = Dropout, 0 = otherwise
+df["Target"] = (df["Target"] == "Dropout").astype(int)
+
+# Quick check
+print(df["Target"].value_counts())
+
 # 3. Target and features
 y = df["Target"]
 X = df.drop(columns=["Target"])
+
 # Identify categorical and numeric columns
 categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
 numeric_cols = X.select_dtypes(include=["number"]).columns.tolist()
