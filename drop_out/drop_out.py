@@ -166,4 +166,23 @@ for name, model in models.items():
     print(f"F1-score : {f1:.4f}")
     if roc is not None:
         print(f"ROC AUC  : {roc:.4f}")
+# =========================================================
+#print roc and aoc for all models
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8, 6))
+
+for name, (fpr, tpr, roc_auc) in roc_results.items():
+    plt.plot(fpr, tpr, label=f"{name} (AUC = {roc_auc:.3f})")
+
+# Diagonal line (random classifier)
+plt.plot([0, 1], [0, 1], linestyle="--")
+
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curves for Dropout Prediction Models")
+plt.legend(loc="lower right")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
 
