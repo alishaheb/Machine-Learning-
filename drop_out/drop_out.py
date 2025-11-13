@@ -19,7 +19,7 @@ x = df.head(5)
 print(x)
 # 2. Drop useless columns
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
-#df["Target"] = (df["Target"] == "Dropout").astype(int)
+df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 # Quick check
 print(df["Target"].value_counts())
@@ -156,7 +156,10 @@ for name, model in models.items():
     prec = precision_score(y_test, y_pred, average='binary')
     rec = recall_score(y_test, y_pred, average='binary')
     f1 = f1_score(y_test, y_pred, average='binary')
-    roc = roc_auc_score(y_test, y_proba[:, 1]) if y_proba is not None else None
+
+    roc = None
+    if y_proba is not None and y_proba.ndim == 2 and y_proba.shape[1] == 2:
+        roc = roc_auc_score(y_test, y_proba[:, 1])
 
     print(f"\nModel: {name}")
     print(classification_report(y_test, y_pred))
@@ -166,5 +169,4 @@ for name, model in models.items():
     print(f"F1-score : {f1:.4f}")
     if roc is not None:
         print(f"ROC AUC  : {roc:.4f}")
-# =========================================================
 
