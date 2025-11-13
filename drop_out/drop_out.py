@@ -7,14 +7,15 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 # =========================================================
 # 1. Load data
-df = pd.read_csv("dropout.csv")
+df = pd.read_csv("dropout.csv", sep=";")
+
 x = df.head(5)
 print(x)
 # 2. Drop useless columns
 #df = df.drop(columns=["Student_ID", "Enrollment_ID"])
 # 3. Target and features
-y = df["Dropped_Out"]
-X = df.drop(columns=["Dropped_Out"])
+y = df["Target"]
+X = df.drop(columns=["Target"])
 # Identify categorical and numeric columns
 categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
 numeric_cols = X.select_dtypes(include=["number"]).columns.tolist()
