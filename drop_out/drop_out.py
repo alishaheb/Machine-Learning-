@@ -5,7 +5,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+import warnings
 # =========================================================
+# Ignore warnings for cleaner output
+warnings.filterwarnings("ignore")
 # 1. Load data
 df = pd.read_csv("dropout.csv", sep=";")
 
