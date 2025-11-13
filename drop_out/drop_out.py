@@ -167,22 +167,43 @@ for name, model in models.items():
     if roc is not None:
         print(f"ROC AUC  : {roc:.4f}")
 # =========================================================
-#print roc and aoc for all models
+#print roc and aoc for xgboost
+from sklearn.model_selection import cross_validate, StratifiedKFold
 import matplotlib.pyplot as plt
 
-plt.figure(figsize=(8, 6))
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-for name, (fpr, tpr, roc_auc) in roc_results.items():
-    plt.plot(fpr, tpr, label=f"{name} (AUC = {roc_auc:.3f})")
+scoring = {
+    "accuracy": "accuracy",
+    "precision": "precision",
+    "recall": "recall",
+    "f1": "f1",
+    "roc_auc": "roc_auc",
+}
 
-# Diagonal line (random classifier)
-plt.plot([0, 1], [0, 1], linestyle="--")
+print("===== 5-fold Cross-Validation Results (on training data) =====")
 
-plt.xlabel("False Positive Rate")
-plt.ylabel("True Positive Rate")
-plt.title("ROC Curves for Dropout Prediction Models")
-plt.legend(loc="lower right")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+all_accuracies = []   # list of arrays, one per model
+model_names   = []    # labels for x-axis
+
+for name, model in models.items():
+    cv_results = cross_validate(
+        model,
+        X_train,
+        y_train,
+        cv=cv,
+        scoring=scoring,
+        return_train_score=False
+    )
+
+    # print mean/std like before (optional)
+    print(f"\nModel: {name}")
+    for metric in scoring.keys():
+        mean_score = cv_results[f'test_{metric}'].mean()
+        std_score = cv_results[f'test_{metric}'].std()
+        print(f"{metric.capitalize()}: {mean_score:.4f} ± {std_score:.4f}")
+
+    # store accuracies for the boxplot
+    all_accuracies.append(cv_results["test_accuracy"])
+    model_names.append(name)
 
