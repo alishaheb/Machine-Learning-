@@ -15,8 +15,6 @@ warnings.filterwarnings("ignore")
 # 1. Load data
 df = pd.read_csv("dropout.csv", sep=";")
 
-x = df.head(5)
-print(x)
 # 2. Drop useless columns
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
 df["Target"] = (df["Target"] == "Dropout").astype(int)
