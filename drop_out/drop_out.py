@@ -21,7 +21,7 @@ df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 # Quick check
 print(df["Target"].value_counts())
-
+dummy=9
 # 3. Target and features
 y = df["Target"]
 X = df.drop(columns=["Target"])
