@@ -20,7 +20,8 @@ df = pd.read_csv("dropout.csv", sep=";")
 df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 # Quick check
-print(df["Target"].value_counts())
+x=df["Target"].value_counts()
+print(x)
 dummy=9
 # 3. Target and features
 y = df["Target"]
