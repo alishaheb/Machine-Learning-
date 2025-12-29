@@ -161,7 +161,7 @@ class MLProcessor:
         if top_n is not None:
             fi_df = fi_df.head(top_n)
 
-        print("\n=== Feature Importances ===")
+        print("\n== Feature Importances ==")
         print(fi_df.to_string(index=False))
 
         return fi_df
