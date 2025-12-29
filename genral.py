@@ -92,7 +92,7 @@ class MLProcessor:
 
         print("Preprocessing complete.")
 
-    def split_data(self, test_size: float = 0.2, random_state: int = 42):
+    def split_data(self, test_size: float = 0.2, random_state: int = RANDOMSTATE):
         print("Splitting data...")
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.X, self.y, test_size=test_size, random_state=random_state
@@ -103,13 +103,13 @@ class MLProcessor:
         print("Training model...")
         if self.task_type == 'classification':
             self.model = RandomForestClassifier(
-                random_state=42,
+                random_state=RANDOMSTATE,
                 n_estimators=200,
                 n_jobs=-1
             )
         elif self.task_type == 'regression':
             self.model = RandomForestRegressor(
-                random_state=42,
+                random_state=RANDOMSTATE,
                 n_estimators=200,
                 n_jobs=-1
             )
