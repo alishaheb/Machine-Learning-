@@ -172,8 +172,8 @@ class MLProcessor:
 
 if __name__ == "__main__":
     processor = MLProcessor(
-        file_path='datasets/BankChurners.csv',
-        target_column='Attrition_Flag'
+        file_path='datasets/web-page-phishing.csv',
+        target_column='phishing'
     )
 
     print("Columns in dataset:", processor.df.columns.tolist())
