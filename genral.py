@@ -8,7 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, mean_squared_error
 from typing import Optional
-
+IMPORTANT = 8  # Number of top features to display
 #dataframe=pd.DataFrame('')
 class MLProcessor:
     def __init__(self, file_path: str, target_column: str):
@@ -167,7 +167,7 @@ class MLProcessor:
         self.split_data()
         self.train_model()
         self.evaluate_model()
-        self.show_feature_importances(top_n=10)  # show top 30 by default
+        self.show_feature_importances(top_n=IMPORTANT)  # show top 30 by default
 
 
 if __name__ == "__main__":
