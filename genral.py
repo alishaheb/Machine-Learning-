@@ -167,7 +167,7 @@ class MLProcessor:
         self.split_data()
         self.train_model()
         self.evaluate_model()
-        self.show_feature_importances(top_n=20)  # show top 30 by default
+        self.show_feature_importances(top_n=10)  # show top 30 by default
 
 
 if __name__ == "__main__":
