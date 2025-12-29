@@ -7,6 +7,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import numpy as np
 import warnings
+import pandas as pd
+
 # =========================================================
 # Ignore warnings for cleaner output
 warnings.filterwarnings("ignore")

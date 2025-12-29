@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, mean_squared_error
 from typing import Optional
 
-dataframe=pd.DataFrame('')
+#dataframe=pd.DataFrame('')
 class MLProcessor:
     def __init__(self, file_path: str, target_column: str):
         self.file_path = file_path
@@ -172,7 +172,7 @@ class MLProcessor:
 
 if __name__ == "__main__":
     processor = MLProcessor(
-        file_path='Titanic/titanic.csv',
+        file_path='datasets/BankChurners.csv',
         target_column='Survived'
     )
 
