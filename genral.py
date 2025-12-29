@@ -173,7 +173,7 @@ class MLProcessor:
 if __name__ == "__main__":
     processor = MLProcessor(
         file_path='datasets/BankChurners.csv',
-        target_column='Survived'
+        target_column='Attrition_Flag'
     )
 
     print("Columns in dataset:", processor.df.columns.tolist())
