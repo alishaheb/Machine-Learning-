@@ -184,3 +184,4 @@ if __name__ == "__main__":
     print(processor.df.head())
 
     processor.run_pipeline()
+#add Roc AUC for classification
