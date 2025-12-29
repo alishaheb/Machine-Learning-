@@ -8,6 +8,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, mean_squared_error
 from typing import Optional
+
+
+
+RANDOMSTATE = 42
 IMPORTANT = 7  # Number of top features to display
 #dataframe=pd.DataFrame('')
 class MLProcessor:
