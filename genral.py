@@ -176,8 +176,8 @@ class MLProcessor:
 
 if __name__ == "__main__":
     processor = MLProcessor(
-        file_path='datasets/car evaluation_with.csv',
-        target_column='unacc'
+        file_path='datasets/alzheimers_disease_data.csv',
+        target_column='Diagnosis'
     )
 
     print("Columns in dataset:", processor.df.columns.tolist())
