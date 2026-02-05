@@ -8,6 +8,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, mean_squared_error
 from typing import Optional
+import shap
+import matplotlib
+matplotlib.use("TkAgg")  # or "Qt5Agg"
 
 
 
@@ -166,13 +169,79 @@ class MLProcessor:
 
         return fi_df
 
+    def explain_with_shap(self, max_background: int = 200, max_explain: int = 200):
+        """
+        SHAP explanation for the trained RandomForest model.
+        Uses TreeExplainer and shows:
+          - summary bar plot (global importance)
+          - summary beeswarm plot (direction + spread)
+        """
+
+        if self.model is None:
+            raise ValueError("Model is not trained yet. Call train_model() first.")
+
+        print("Running SHAP...")
+
+        # SHAP is faster if we sample
+        X_train_sample = self.X_train
+        X_test_sample = self.X_test
+
+        if hasattr(X_train_sample, "shape") and X_train_sample.shape[0] > max_background:
+            idx = np.random.RandomState(RANDOMSTATE).choice(X_train_sample.shape[0], max_background, replace=False)
+            X_train_sample = X_train_sample[idx]
+
+        if hasattr(X_test_sample, "shape") and X_test_sample.shape[0] > max_explain:
+            idx = np.random.RandomState(RANDOMSTATE).choice(X_test_sample.shape[0], max_explain, replace=False)
+            X_test_sample = X_test_sample[idx]
+
+        # Convert sparse matrices (common after OneHotEncoder) to dense for plotting compatibility
+        if hasattr(X_train_sample, "toarray"):
+            X_train_sample_dense = X_train_sample.toarray()
+        else:
+            X_train_sample_dense = X_train_sample
+
+        if hasattr(X_test_sample, "toarray"):
+            X_test_sample_dense = X_test_sample.toarray()
+        else:
+            X_test_sample_dense = X_test_sample
+
+        # Feature names from the preprocessor
+        try:
+            feature_names = self.preprocessor.get_feature_names_out()
+        except AttributeError:
+            num_names = self.numeric_features
+            cat_encoder = self.preprocessor.named_transformers_['cat'].named_steps['encoder']
+            cat_names = cat_encoder.get_feature_names_out(self.categorical_features)
+            feature_names = np.concatenate([num_names, cat_names])
+
+        # TreeExplainer is the right choice for RandomForest
+        explainer = shap.TreeExplainer(self.model)
+
+        shap_values = explainer.shap_values(X_test_sample_dense)
+
+        # --- Plotting ---
+        # For binary classification, shap_values is usually a list [class0, class1]
+        if self.task_type == "classification" and isinstance(shap_values, list):
+            # Explain the positive class (class 1) by convention
+            sv = shap_values[1] if len(shap_values) > 1 else shap_values[0]
+        else:
+            sv = shap_values
+
+        # Global importance (bar)
+        shap.summary_plot(sv, X_test_sample_dense, feature_names=feature_names, plot_type="bar")
+
+        # Global importance with direction (beeswarm)
+        shap.summary_plot(sv, X_test_sample_dense, feature_names=feature_names)
+
+        print("SHAP complete.")
+
     def run_pipeline(self):
         self.preprocess()
         self.split_data()
         self.train_model()
         self.evaluate_model()
         self.show_feature_importances(top_n=IMPORTANT)  # show top 30 by default
-
+        self.explain_with_shap()
 
 if __name__ == "__main__":
     processor = MLProcessor(
