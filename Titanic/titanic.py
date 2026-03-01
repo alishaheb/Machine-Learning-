@@ -16,6 +16,7 @@ X = df.drop(columns=["Survived"])
 # Identify categorical and numeric columns
 dfategorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
 dnumeric_cols = X.select_dtypes(include=["number"]).columns.tolist()
+
 # =========================================================
 # 4. Train/test split
 X_train, X_test, y_train, y_test = train_test_split(
