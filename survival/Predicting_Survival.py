@@ -29,6 +29,7 @@ df["Treated_with_drugs"] = df["Treated_with_drugs"].str.upper()
 
 # Target and features
 y = df["Survived_1_year"]
+
 X = df.drop(columns=["Survived_1_year", "ID_Patient_Care_Situation", "Patient_ID"])
 
 categorical_cols = [
