@@ -21,6 +21,7 @@ df = pd.read_csv("dropout.csv", sep=";")
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
 df["Target"] = (df["Target"] == "Dropout").astype(int)
 
+
 # Quick check
 x=df["Target"].value_counts()
 
