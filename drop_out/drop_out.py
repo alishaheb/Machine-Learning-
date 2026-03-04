@@ -22,6 +22,7 @@ df = pd.read_csv("dropout.csv", sep=";")
 df["Target"] = (df["Target"] == "Dropout").astype(int)
 
 
+
 # Quick check
 x=df["Target"].value_counts()
 
