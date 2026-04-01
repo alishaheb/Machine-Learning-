@@ -13,9 +13,12 @@ import pandas as pd
 # Ignore warnings for cleaner output
 warnings.filterwarnings("ignore")
 
+
+
 # =========================================================
 # 1. Load data
 df = pd.read_csv("dropout.csv", sep=";")
+
 
 # 2. Drop useless columns
 # Turn Target into binary: 1 = Dropout, 0 = otherwise
