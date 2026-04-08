@@ -41,8 +41,8 @@ from sklearn.metrics import (
 from xgboost import XGBClassifier
 
 # Class imbalance handling
-# from imblearn.over_sampling import SMOTE
-# from imblearn.pipeline import Pipeline as ImbPipeline
+from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline as ImbPipeline
 
 # Explainability - THIS IS WHAT MAKES YOUR PROJECT STAND OUT
 import shap
