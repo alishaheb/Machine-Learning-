@@ -41,8 +41,8 @@ from sklearn.metrics import (
 from xgboost import XGBClassifier
 
 # Class imbalance handling
-from imblearn.over_sampling import SMOTE
-from imblearn.pipeline import Pipeline as ImbPipeline
+# from imblearn.over_sampling import SMOTE
+# from imblearn.pipeline import Pipeline as ImbPipeline
 
 # Explainability - THIS IS WHAT MAKES YOUR PROJECT STAND OUT
 import shap
@@ -58,8 +58,8 @@ plt.rcParams['figure.figsize'] = (10, 6)
 # TIP: The Kaggle notebook skips deep exploration. You should not.
 # Interviewers want to see you UNDERSTAND the data, not just model it.
 
-df = pd.read_csv('WA_Fn-UseC_-Telco-Customer-Churn.csv')
-
+df = pd.read_csv('Telco-Customer-Churn.csv')
+x=2
 print("=" * 60)
 print("DATASET OVERVIEW")
 print("=" * 60)
