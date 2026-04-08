@@ -59,7 +59,7 @@ plt.rcParams['figure.figsize'] = (10, 6)
 # Interviewers want to see you UNDERSTAND the data, not just model it.
 
 df = pd.read_csv('Telco-Customer-Churn.csv')
-x=2
+
 print("=" * 60)
 print("DATASET OVERVIEW")
 print("=" * 60)
