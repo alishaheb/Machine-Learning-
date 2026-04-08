@@ -6,9 +6,9 @@
 This repository is a systematic exploration of machine learning models across a wide range of datasets and problem types.  
 The goal is **learning through experimentation**, not leaderboard chasing.
 
-More than **600 machine learning models** are trained, evaluated, and compared using **diverse datasets** to understand:
+More than **100 machine learning models** are trained, evaluated, and compared using **diverse datasets** to understand:
 
-- Model behavior across different data distributions
+- Model behaovior across different data distributions
 - Strengths and weaknesses of algorithms
 - The impact of preprocessing, feature engineering, and hyperparameters
 - Trade-offs between performance, complexity, and interpretability
@@ -29,7 +29,7 @@ This repository serves as a **personal research lab and learning reference**.
 
 ## Experiment Scope
 
-### Models (600+ total)
+### Models (100+ total)
 Includes but is not limited to:
 
 - Linear Models  
