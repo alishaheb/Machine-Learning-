@@ -56,7 +56,7 @@ plt.rcParams['figure.figsize'] = (10, 6)
 # ============================================================
 # STEP 2: LOAD & EXPLORE DATA
 # ============================================================
-# TIP: The Kaggle notebook skips deep exploration. You should not.
+
 
 
 df = pd.read_csv('Telco-Customer-Churn.csv')
