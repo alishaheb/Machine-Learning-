@@ -36,6 +36,7 @@ from sklearn.metrics import (
     classification_report, confusion_matrix, roc_auc_score,
     roc_curve, precision_recall_curve, f1_score, accuracy_score
 )
+from sklearn.tree import DecisionTreeClassifier
 
 # XGBoost - the go-to for tabular data
 from xgboost import XGBClassifier
@@ -279,6 +280,7 @@ print("=" * 60)
 
 models = {
     'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
+    'Decision Tree': DecisionTreeClassifier(max_depth=5, random_state=42),
     'Random Forest': RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42),
     'Gradient Boosting': GradientBoostingClassifier(n_estimators=200, max_depth=5, random_state=42),
     'XGBoost': XGBClassifier(
