@@ -158,7 +158,7 @@ print(f"4. Senior citizens churn at {senior_churn.iloc[1]:.1%} vs "
 # ============================================================
 # STEP 5: FEATURE ENGINEERING
 # ============================================================
-# TIP: THIS IS WHERE YOU STAND OUT. The Kaggle notebook doesn't do this.
+
 # Creating domain-specific features shows you think like a data scientist,
 # not just a model-fitter.
 

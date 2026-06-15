@@ -1,0 +1,63 @@
+============================================================
+  FEATURE STORY: Why Your Model Thinks What It Thinks
+============================================================
+
+  THE BIG PICTURE:
+  Your model considers 50 features to make predictions.
+  But not all features are equal — here's the story:
+
+  🥇 #1 — Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_1 (contributes 43.4% of model's reasoning)
+     This is THE most important feature. The model relies on it
+     more than any other signal in your data.
+
+  🥈 #2 — Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_2 (43.1%)
+     The second most influential feature — together with #1,
+     these two features account for 87% of the model's decisions.
+
+  🥉 #3 — Total_Trans_Ct (3.9%)
+     Rounds out the top 3. Still a significant contributor.
+
+  ● #4 — Total_Ct_Chng_Q4_Q1 (2.5%)
+     A supporting signal that helps refine predictions.
+
+  ● #5 — Contacts_Count_12_mon (1.8%)
+     A supporting signal that helps refine predictions.
+
+  ○ #6 — Total_Revolving_Bal (1.6%)
+     Minor contributor — removing it wouldn't change much.
+
+  ○ #7 — Total_Relationship_Count (1.1%)
+     Minor contributor — removing it wouldn't change much.
+
+  ○ #8 — Avg_Utilization_Ratio (1.0%)
+     Minor contributor — removing it wouldn't change much.
+
+  ○ #9 — Total_Trans_Amt_div_Total_Trans_Ct (0.9%)
+     Minor contributor — removing it wouldn't change much.
+
+  ○ #10 — Months_Inactive_12_mon (0.7%)
+     Minor contributor — removing it wouldn't change much.
+
+
+  FEATURE RELATIONSHIPS:
+  Found 17 highly correlated feature pairs:
+    • Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_1 ↔ Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_2 (correlation: 1.00)
+      These features tell a similar story — one might be redundant.
+    • Credit_Limit_div_Avg_Open_To_Buy ↔ Credit_Limit_div_Avg_Open_To_Buy_div_Avg_Utilization_Ratio (correlation: 1.00)
+      These features tell a similar story — one might be redundant.
+    • Credit_Limit ↔ Total_Revolving_Bal_div_Avg_Utilization_Ratio (correlation: 1.00)
+      These features tell a similar story — one might be redundant.
+    • Avg_Open_To_Buy ↔ Total_Revolving_Bal_div_Avg_Utilization_Ratio (correlation: 1.00)
+      These features tell a similar story — one might be redundant.
+    • Credit_Limit ↔ Avg_Open_To_Buy (correlation: 1.00)
+      These features tell a similar story — one might be redundant.
+
+
+  SUMMARY:
+  • Top 3 features drive 90% of all predictions
+  • Bottom 40 features contribute minimally
+  • For classification, the model uses these features to draw
+    decision boundaries between classes
+
+  💡 TIP: Consider removing low-importance features to speed up
+  training and potentially improve generalization.

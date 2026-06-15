@@ -1,0 +1,11 @@
+Feature,Score_After_Shuffle,Degradation_%
+CLIENTNUM,1.0,0.0
+Customer_Age,1.0,0.0
+Dependent_count,1.0,0.0
+Months_on_book,1.0,0.0
+Total_Relationship_Count,1.0,0.0
+Months_Inactive_12_mon,1.0,0.0
+Contacts_Count_12_mon,1.0,0.0
+Credit_Limit,1.0,0.0
+Total_Revolving_Bal,1.0,0.0
+Avg_Open_To_Buy,1.0,0.0

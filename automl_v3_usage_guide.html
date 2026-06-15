@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoML Pipeline v3.0 — Usage Guide</title>
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f4;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --text-tertiary: #9a9a9a;
+    --border-light: rgba(0,0,0,0.12);
+    --border-med: rgba(0,0,0,0.2);
+    --info-bg: #E6F1FB;
+    --info-text: #0C447C;
+    --success-bg: #EAF3DE;
+    --success-text: #3B6D11;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1e;
+      --bg-secondary: #2a2a2a;
+      --text-primary: #e5e5e5;
+      --text-secondary: #a0a0a0;
+      --text-tertiary: #6b6b6b;
+      --border-light: rgba(255,255,255,0.12);
+      --border-med: rgba(255,255,255,0.2);
+      --info-bg: #0C447C;
+      --info-text: #B5D4F4;
+      --success-bg: #27500A;
+      --success-text: #C0DD97;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: var(--bg-primary); color: var(--text-primary); padding: 2rem; line-height: 1.6; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.5rem; }
+  .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+  .guide { max-width: 700px; margin: 0 auto; }
+  .step { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .step-num { font-size: 12px; font-weight: 500; color: var(--info-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .step-title { font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+  .cmd { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-md); padding: 10px 14px; font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); line-height: 1.6; margin-bottom: 8px; cursor: pointer; position: relative; word-break: break-all; }
+  .cmd:hover { border-color: var(--border-med); }
+  .cmd .copy-hint { position: absolute; right: 8px; top: 8px; font-size: 11px; color: var(--text-tertiary); font-family: var(--font-sans); }
+  .tab-bar { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 0.5px solid var(--border-light); }
+  .tab { padding: 8px 16px; font-size: 14px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--font-sans); }
+  .tab:hover { color: var(--text-primary); }
+  .tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); font-weight: 500; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--radius-md); font-weight: 500; margin-left: 6px; }
+  .badge-new { background: var(--success-bg); color: var(--success-text); }
+  .badge-core { background: var(--info-bg); color: var(--info-text); }
+  .output-list { font-size: 13px; color: var(--text-secondary); line-height: 1.8; padding-left: 1rem; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="guide">
+<h1>AutoML Pipeline v3.0 — Usage guide</h1>
+<p class="subtitle">Self-healing, feature stories, drift sentinel, adversarial stress testing</p>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showTab('quick')">Quick start</button>
+  <button class="tab" onclick="showTab('modes')">All modes</button>
+  <button class="tab" onclick="showTab('modules')">Innovative modules</button>
+  <button class="tab" onclick="showTab('drift')">Drift monitoring</button>
+</div>
+
+<div id="quick" class="panel active">
+  <div class="step">
+    <div class="step-num">Step 1 — Install</div>
+    <div class="cmd">pip install pandas numpy scikit-learn xgboost lightgbm matplotlib seaborn shap<span class="copy-hint">copy</span></div>
+  </div>
+  <div class="step">
+    <div class="step-num">Step 2 — Run everything</div>
+    <div class="step-desc">This runs both classification + regression, self-healing, stress testing, and feature stories — all at once.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data your_data.csv --target target_column --task both --all<span class="copy-hint">copy</span></div>
+  </div>
+  <div class="step">
+    <div class="step-num">Step 3 — Check results</div>
+    <div class="step-desc">All outputs land in the pipeline_output/ folder:</div>
+    <div class="output-list">
+      model_comparison_*.png — visual ranking of all models<br>
+      confusion_matrix_*.png — classification accuracy grid<br>
+      actual_vs_predicted_*.png — regression scatter plot<br>
+      shap_importance.png — why each feature matters<br>
+      feature_story.txt — plain-English explanation<br>
+      stress_test_report.png — robustness gauge + attack results<br>
+      cross_task_insights.png — feature importance across tasks<br>
+      healing_strategy_comparison.png — which strategy won<br>
+      data_fingerprint.json — baseline for future drift checks<br>
+      best_model.pkl — saved model ready for production
+    </div>
+  </div>
+</div>
+
+<div id="modes" class="panel">
+  <div class="step">
+    <div class="step-num">Auto-detect (simplest)</div>
+    <div class="step-desc">Pipeline figures out if it's classification or regression based on your target column.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target price</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Force classification</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target label --task classification</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Force regression</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target price --task regression</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Dual mode <span class="badge badge-core">both at once</span></div>
+    <div class="step-desc">Runs classification AND regression simultaneously. For continuous targets, it auto-bins into classes. For categorical targets, it encodes to numeric.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target price --task both</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Clustering (no target)</div>
+    <div class="step-desc">When you don't have a target column — finds natural groupings in your data.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv</div>
+  </div>
+</div>
+
+<div id="modules" class="panel">
+  <div class="step">
+    <div class="step-num">Self-healing <span class="badge badge-new">new</span></div>
+    <div class="step-desc">Tries 7 different preprocessing strategies (imputers, scalers, feature engineering levels) and picks the best one automatically.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target col --heal</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Adversarial stress testing <span class="badge badge-new">new</span></div>
+    <div class="step-desc">Attacks your model with noise, missing data, outliers, and feature shuffling. Reports a robustness score 0–100.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target col --stress</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Feature story <span class="badge badge-new">new</span></div>
+    <div class="step-desc">Generates a plain-English narrative explaining why each feature matters using SHAP analysis.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target col --story</div>
+  </div>
+  <div class="step">
+    <div class="step-num">All modules combined</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target col --task both --all</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Mix and match</div>
+    <div class="step-desc">You can combine any flags freely:</div>
+    <div class="cmd">python auto_ml_pipeline.py --data data.csv --target col --heal --stress</div>
+  </div>
+</div>
+
+<div id="drift" class="panel">
+  <div class="step">
+    <div class="step-num">Step 1 — Train your model (creates baseline automatically)</div>
+    <div class="step-desc">When you run the pipeline, it saves a data_fingerprint.json capturing the statistical profile of your training data.</div>
+    <div class="cmd">python auto_ml_pipeline.py --data train.csv --target price --all</div>
+  </div>
+  <div class="step">
+    <div class="step-num">Step 2 — Later, check new data for drift</div>
+    <div class="step-desc">Compare new incoming data against the saved baseline. Detects distribution shifts, new categories, missing pattern changes, and schema changes.</div>
+    <div class="cmd">python auto_ml_pipeline.py --monitor --baseline pipeline_output/data_fingerprint.json --new new_data.csv</div>
+  </div>
+  <div class="step">
+    <div class="step-num">What it checks</div>
+    <div class="step-desc" style="line-height: 2;">
+      Numeric drift — Kolmogorov-Smirnov test per feature<br>
+      Categorical drift — new or vanished categories<br>
+      Missing patterns — rate changes above 10%<br>
+      Schema changes — added or removed columns
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+document.querySelectorAll('.cmd').forEach(el => {
+  el.addEventListener('click', () => {
+    const text = el.textContent.replace('copy', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const hint = el.querySelector('.copy-hint');
+      if (hint) { hint.textContent = 'copied!'; setTimeout(() => hint.textContent = 'copy', 1500); }
+    });
+  });
+});
+</script>
+</body>
+</html>

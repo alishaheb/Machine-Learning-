@@ -1,0 +1,5 @@
+Round,Strategy,Best_Model,Score
+1,Baseline,GradientBoosting,1.0
+2,Robust scaling,GradientBoosting,1.0
+3,KNN imputation,GradientBoosting,1.0
+4,Power transform + medium features,GradientBoosting,1.0
