@@ -457,7 +457,7 @@ print("✅ Saved: label_encoders.pkl")
 # STEP 12: FASTAPI DEPLOYMENT CODE
 # ============================================================
 # Save this as a separate file: app.py
-# This is what makes your project PRODUCTION-READY.
+# Makes your project PRODUCTION-READY.
 
 fastapi_code = '''
 """
