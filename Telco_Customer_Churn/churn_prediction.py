@@ -77,7 +77,7 @@ print(f"\nChurn distribution:\n{df['Churn'].value_counts(normalize=True)}")
 # ============================================================
 # STEP 3: DATA CLEANING
 # ============================================================
-# TIP: The Kaggle notebook just drops rows. Better approach below.
+
 
 # TotalCharges has spaces that should be numeric
 df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
