@@ -57,7 +57,7 @@ plt.rcParams['figure.figsize'] = (10, 6)
 # STEP 2: LOAD & EXPLORE DATA
 # ============================================================
 # TIP: The Kaggle notebook skips deep exploration. You should not.
-# Interviewers want to see you UNDERSTAND the data, not just model it.
+
 
 df = pd.read_csv('Telco-Customer-Churn.csv')
 
@@ -633,7 +633,6 @@ with open('requirements.txt', 'w') as f:
 print("✅ Saved: requirements.txt")
 
 print("\n" + "=" * 60)
-print("🎉 PROJECT COMPLETE!")
 print("=" * 60)
 print("""
 Next steps:
