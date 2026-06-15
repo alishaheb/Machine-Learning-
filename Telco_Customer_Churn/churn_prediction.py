@@ -247,7 +247,7 @@ print(f"Final feature set shape: {X.shape}")
 # ============================================================
 # STEP 7: TRAIN-TEST SPLIT + HANDLE CLASS IMBALANCE
 # ============================================================
-# TIP: The Kaggle notebook ignores class imbalance. This is a major mistake.
+
 # Churn is ~27%, so a dumb model predicting "No Churn" gets 73% accuracy.
 
 X_train, X_test, y_train, y_test = train_test_split(
